@@ -1,0 +1,8 @@
+scikit-learn
+flask
+gunicorn
+mlflow
+boto3
+requests
+xgboost
+numpy<2

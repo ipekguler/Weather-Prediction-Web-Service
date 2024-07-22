@@ -1,0 +1,16 @@
+services:
+  myapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - app.env
+    ports:
+      - 9696:9696
+    networks:
+      - weather-network
+
+networks:
+  weather-network:
+    name: weather-net
+    external: true

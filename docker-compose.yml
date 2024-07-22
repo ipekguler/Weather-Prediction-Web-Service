@@ -1,0 +1,52 @@
+version: '3'
+services:
+  magic:
+    image: mageai/mageai:latest
+    command: mage start ${PROJECT_NAME}
+    env_file:
+      - mage.env
+      - mlflow.env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      USER_CODE_PATH: /home/src/orchestration/mage_quickstart/${PROJECT_NAME}
+      ENV: ${ENV}
+    ports:
+      - 6789:6789
+    volumes:
+      - .:/home/src/
+      - ./data/weather_classification_data.csv:/app/local_data/weather_classification_data.csv
+      - ./save_to_s3.py:/app/local_data/save_to_s3.py
+    restart: on-failure:5
+    networks:
+      - app-network
+  mlflow:
+    build:
+      context: .
+      dockerfile: mlflow.dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - "${PWD}/mlflow:/home/mlflow/"
+    env_file:
+      - mlflow.env
+    networks:
+      - app-network
+      - weather-network
+  localstack:
+    image: localstack/localstack:latest
+    env_file:
+      - localstack.env
+    ports:
+      - 4566:4566
+    networks:
+      - app-network
+      - weather-network
+
+networks:
+  weather-network:
+    name: weather-net
+    external: true
+  app-network:
+    driver: bridge

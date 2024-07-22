@@ -1,0 +1,1 @@
+{"Temperature": "float64", "Humidity": "int64", "Wind Speed": "float64", "Precipitation (%)": "float64", "Cloud Cover": "str", "Atmospheric Pressure": "float64", "UV Index": "int64", "Season": "str", "Visibility (km)": "float64", "Location": "str", "Weather Type": "str"}
