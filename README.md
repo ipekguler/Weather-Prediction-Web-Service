@@ -19,7 +19,7 @@ A web service is used to get weather predictions. The user sends a request to th
 
 ## Project Overview
 
-* **Cloud**: The project uses localstack to use AWS S3. Models are fitted through hyperparameter tuning and then uploaded it to S3 for later use to make predictions.
+* **Cloud**: The project uses localstack to use AWS S3. Sklearn preprocessors and models are uploaded it to S3 for later use to make predictions inside the web service. 
 * **Experiment tracking and model registry**: Experiments are tracked using MLFlow. Parameters, artifacts and models are logged while experimenting with models. The best performing model is selected and registered to MLFlow model registry.
 * **Workflow orchestration**: Loading data, preprocessing, model fitting, hyperparameter tuning, experiment tracking and model registry are all orchestrated using Mage.
 * **Model deployment**: The model is deployed as a web service integrated with MLFlow using Flask and gunicorn. The model deployment code is containerized and could be deployed to the cloud.
@@ -42,7 +42,7 @@ Create an external network called "weather-net". This is required to put the web
 $ docker network create "weather-net"
 ```
 
-* ### Developing & saving the model
+* ### Developing & saving the model and preprocessors
 
 Start running Mage, MLFlow and Localstack. Mage will start the project "weather_prediction_project".
 
@@ -55,10 +55,10 @@ On a browser, go to the Mage UI at http://localhost:6789 and run the pipeline ca
 
 After the pipeline is done, scroll down to copy the run id for the best model. You will need it to download the model from Localstack S3 when buiding the web service in the next step.
 
-You can modify the following parameters in the pipeline to customize model selection process:
+You can modify the variables in the .env file to customize model selection process such as:
 
-* num_trials: determines how many models fits are to be made
-* top_n: determines the number of best performing models for final evaluation.
+* TOP_N: determines how many initial model fits are to be made.
+* NUM_TRIALS: determines the number of best performing models for final evaluation.
 
 * ### Starting the web service
 
@@ -77,7 +77,7 @@ $ docker exec -it web_service-myapp-1 sh
 $ python test.py
 ```
 
-You should get a response like the following:
+The web service loads model and preprocessors from Localstack S3. If downloaded before, the service reads them from its file system. After making the request, you should get a response like the following:
 
 ```
 "weather":"Cloudy"
