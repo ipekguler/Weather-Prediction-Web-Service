@@ -77,7 +77,7 @@ def export_data(data, *args, **kwargs):
         fn=objective,
         space=search_space,
         algo=tpe.suggest,
-        max_evals=20,
+        max_evals=int(os.environ["TOP_N"]),
         trials=Trials(),
         rstate=rstate
     )

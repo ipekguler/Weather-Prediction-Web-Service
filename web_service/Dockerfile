@@ -5,7 +5,7 @@ COPY requirements.txt ./requirements.txt
 RUN pip3 install --force-reinstall pip==20.0.2
 RUN pip install -r ./requirements.txt
 
-COPY [ "predict.py", "test.py", "./artifacts/oe.bin", "./artifacts/le.bin", "./artifacts/ss.bin", "./" ]
+COPY [ "predict.py", "test.py", "./" ]
 
 EXPOSE 9696
 

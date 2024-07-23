@@ -11,7 +11,7 @@ The dataset includes:
 * Features: Various meteorological measurements including temperature, humidity, wind speed, pressure, etc.
 * Target: Weather type categories (e.g., sunny, rainy, cloudy) based on the provided weather data.
 
-Download the dataset here: https://www.kaggle.com/datasets/nikhil7280/weather-type-classification/data
+Link to the dataset: https://www.kaggle.com/datasets/nikhil7280/weather-type-classification/data
 
 ## Service Usage
 
@@ -28,9 +28,23 @@ A web service is used to get weather predictions. The user sends a request to th
 
 ## Usage
 
+* ### Project setup
+
+Clone the repository.
+
+```
+$ git clone https://github.com/ipekguler/Weather-Prediction-Web-Service.git
+```
+
+Create an external network called "weather-net". This is required to put the web service in the same network as Localstack S3 so it can load the model and artifacts to make predictions.
+
+```
+$ docker network create "weather-net"
+```
+
 * ### Developing & saving the model
 
-Run the following prompt to start running Mage, MLFlow and Localstack. Mage will start the project "weather_prediction_project".
+Start running Mage, MLFlow and Localstack. Mage will start the project "weather_prediction_project".
 
 ```
 $ cd <repo-base-dir>
@@ -48,16 +62,15 @@ You can modify the following parameters in the pipeline to customize model selec
 
 * ### Starting the web service
 
-Run the following prompt to start the web service. The service will start running and listening to the requests.
+Start the web service:
 
 ```
 $ cd <repo-base-dir>/web_service
 $ docker-compose up
 ```
+The service will start running and listening to the requests. "test.py" script in the web_service directory contains sample data that could be sent to the service to get weather prediction. You can use the same parameters or modify them.
 
-"test.py" script in the web_service directory contains sample data that could be sent to the service to get weather prediction. You can use the same parameters or modify them.
-
-To send a POST request to the server with the default data, go to a seperate shell and run the following prompt.
+Go to a seperate shell to send a POST request to the server with the default data.
 
 ```
 $ docker exec -it web_service-myapp-1 sh
@@ -72,7 +85,7 @@ You should get a response like the following:
 
 * ### Monitoring
 
-Run the following prompt to set up the environment.
+Set up the environment for monitoring.
 
 ```
 $ conda create -n project python=3.11
@@ -82,7 +95,7 @@ $ pip install -r requirements.txt
 
 Using the activated environment, go to jupyter notebook UI and launch "weather_prediction_evidently" notebook. Run this notebook to save the full and reference dataset we will need when calculating the metrics.
 
-Run the following prompt to start running Postgres, Adminer and Grafana.
+Start running Postgres, Adminer and Grafana.
 
 ```
 $ cd <repo-base-dir>/monitoring
@@ -91,10 +104,12 @@ $ docker-compose up
 
 "calculate_metrics.py" script is used to simulate new data flow. The script takes randomized portions of the data, treats it like incoming data and compares it to a reference dataset to calculate metrics such as prediction drift and missing data.
 
-On a seperate shell, activate the conda project environment and run the following prompt to get data flowing to Postgres and a pre-defined Grafana dashboard.
+On a seperate shell, go to the monitoring directory, activate the conda project environment and run the script to get data flowing to Postgres and a pre-defined Grafana dashboard.
 
 ```
+$ cd <repo-base-dir>/monitoring
+$ conda activate project
 $ python calculate_metrics.py
 ```
 
-On a browser, go to the Grafana UI at http://localhost:3030 to observe the data quality dashboard.
+On a browser, go to the Grafana UI at http://localhost:3030 to observe the data quality dashboard. The default username and password are admin.

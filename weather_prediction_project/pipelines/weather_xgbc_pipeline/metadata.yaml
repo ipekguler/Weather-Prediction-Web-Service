@@ -76,7 +76,7 @@ blocks:
   language: python
   name: register
   retry_config: null
-  status: failed
+  status: executed
   timeout: null
   type: data_exporter
   upstream_blocks:
@@ -104,5 +104,6 @@ spark_config: {}
 tags: []
 type: python
 uuid: weather_xgbc_pipeline
+variables: {}
 variables_dir: /home/src/mage_data/weather_prediction_project
 widgets: []

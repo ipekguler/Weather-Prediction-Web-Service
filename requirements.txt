@@ -1,4 +1,5 @@
 mlflow
+mage
 click
 pandas
 numpy
@@ -7,3 +8,4 @@ xgboost
 hyperopt
 matplotlib
 boto3
+joblib

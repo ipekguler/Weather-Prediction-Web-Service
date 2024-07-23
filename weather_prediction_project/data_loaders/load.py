@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 if 'data_loader' not in globals():
     from mage_ai.data_preparation.decorators import data_loader
@@ -14,7 +15,7 @@ def load_data(*args, **kwargs):
     Returns:
         Anything (e.g. data frame, dictionary, array, int, str, etc.)
     """
-    df = pd.read_csv('/app/local_data/weather_classification_data.csv')
+    df = pd.read_csv(os.environ["DATA_PATH"])
     
     return df
 

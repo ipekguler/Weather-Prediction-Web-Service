@@ -1,12 +1,12 @@
 import pickle
 import mlflow
-import boto3
-import tempfile
+import os
 
 from mlflow.entities import ViewType
 from mlflow.tracking import MlflowClient
 from xgboost import XGBClassifier
 from sklearn.metrics import f1_score
+
 
 mlflow.end_run()
 
@@ -57,20 +57,12 @@ def export_data(data, *args, **kwargs):
     le, ss, oe, X_train, y_train, X_test, y_test, X_val, y_val = data
 
     client = MlflowClient()
-    s3 = boto3.client(
-        's3',
-        region_name='us-east-1',
-        aws_access_key_id='test',
-        aws_secret_access_key='test',
-        endpoint_url='http://localstack:4566'
-    )
     
-    s3.create_bucket(Bucket="weather-model-bucket")
     experiment = client.get_experiment_by_name(HPO_EXPERIMENT_NAME)
     runs = client.search_runs(
         experiment_ids=experiment.experiment_id,
         run_view_type=ViewType.ACTIVE_ONLY,
-        max_results=5,
+        max_results=int(os.environ["NUM_TRIALS"]),
         order_by=["metrics.f1_score DESC"]
     )
 
@@ -81,7 +73,7 @@ def export_data(data, *args, **kwargs):
     best_run = client.search_runs(
         experiment_ids=experiment.experiment_id,
         run_view_type=ViewType.ACTIVE_ONLY,
-        max_results=5,
+        max_results=int(os.environ["NUM_TRIALS"]),
         order_by=["metrics.test_f1 DESC"]
     )[0]
 
@@ -92,23 +84,18 @@ def export_data(data, *args, **kwargs):
     loaded_model = mlflow.xgboost.load_model(model_uri)
     mlflow.xgboost.log_model(loaded_model, artifact_path='best-model/model')
 
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        path = Path(tmp_dir, "le.bin")
-        mlflow.log_artifact(path)
-
-    with open('./weather_prediction_project/artifacts/le.bin', 'wb') as f_out:
+    with open('./weather_prediction_project/artifacts/le.pkl', 'wb') as f_out:
         pickle.dump(le, f_out)
-        mlflow.log_artifact('./weather_prediction_project/artifacts/le.bin', artifact_path='best-model/bin')
 
-    with open('./weather_prediction_project/artifacts/ss.bin', 'wb') as f_out:
+    with open('./weather_prediction_project/artifacts/ss.pkl', 'wb') as f_out:
         pickle.dump(ss, f_out)
-        mlflow.log_artifact('./weather_prediction_project/artifacts/ss.bin', artifact_path='best-model/bin')
 
-    with open('./weather_prediction_project/artifacts/oe.bin', 'wb') as f_out:
+    with open('./weather_prediction_project/artifacts/oe.pkl', 'wb') as f_out:
         pickle.dump(oe, f_out)
-        mlflow.log_artifact('./weather_prediction_project/artifacts/oe.bin', artifact_path='best-model/bin')
 
-    print(s3.list_objects_v2(Bucket="weather-model-bucket"))
+    mlflow.log_artifacts('./weather_prediction_project/artifacts/', artifact_path='preprocessor', run_id=run_id)
 
+    print(f"best model's run id: {run_id}")
+    #print(s3.list_objects_v2(Bucket="weather-model-bucket"))
 
 
