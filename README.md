@@ -53,7 +53,7 @@ $ docker-compose up
 
 On a browser, go to the Mage UI at http://localhost:6789 and run the pipeline called "weather_xgbc_pipeline" until the end. This pipeline will take the Weather Type Classification Data from the local file system, preprocess it, fit models, do hyperparameter tuning and choose the best model while tracking every step on MLFlow. Models are saved to Localstack S3.
 
-After the pipeline is done, scroll down to copy the run id for the best model. You will need it to download the model from Localstack S3 when buiding the web service in the next step.
+After the pipeline is done, scroll down to the output of the last block and copy the run id for the best model. You will need it to download the model from Localstack S3 when buiding the web service in the next step.
 
 You can modify the variables in the .env file to customize model selection process such as:
 
@@ -61,6 +61,8 @@ You can modify the variables in the .env file to customize model selection proce
 * NUM_TRIALS: determines the number of best performing models for final evaluation.
 
 * ### Starting the web service
+
+Go to the "<repo-base-dir>/web_service" directory and modify the app.env file. Replace RUN_ID variable with the run id value you copied from the Mage UI in the previous section.
 
 Start the web service:
 
